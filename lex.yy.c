@@ -370,11 +370,13 @@ char *yytext;
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
-int sum = 0, curr_qty, f=0, i = 0;
+int sum = 0, curr_qty, f = 0, i = 0, ind = 0;
 char cur_item[25];
-char* items[25]={"id","Schezwan Fried Rice","Chicken Noodles","Dosa","Idly"};
-int price[]={12,100,110,35,10};
-#line 378 "lex.yy.c"
+char* items[25] = {"Schezwan Fried Rice","Chicken Noodles","Dosa","Idly"};
+int price[] ={12, 100, 110, 35, 10};
+char *bill_items[25];
+int bill_qty[30], bill_price[30];
+#line 380 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -525,9 +527,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 11 "bill_parser.l"
+#line 13 "bill_parser.l"
 
-#line 531 "lex.yy.c"
+#line 533 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -612,55 +614,75 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 12 "bill_parser.l"
-{printf("%d",sum);return 1;}
+#line 14 "bill_parser.l"
+{
+							printf("====================BILL=====================\n");
+							for(i = 0; i < ind; i++){
+								printf("%s %d %d\n", bill_items[i], bill_qty[i], bill_price[i]);
+							}
+							printf("TOTAL %d\n", sum);
+							printf("====================END======================\n");
+							return 1;
+						}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 13 "bill_parser.l"
-{strcat(cur_item,yytext);}
+#line 23 "bill_parser.l"
+{	
+							strcat(cur_item,yytext);
+						}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 14 "bill_parser.l"
-{strcat(cur_item,yytext);}
+#line 26 "bill_parser.l"
+{
+							strcat(cur_item,yytext);
+						}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 15 "bill_parser.l"
-{continue;} 
+#line 29 "bill_parser.l"
+{
+							continue;
+						} 
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 16 "bill_parser.l"
-{curr_qty=atoi(yytext);}
+#line 32 "bill_parser.l"
+{
+							curr_qty=atoi(yytext);
+						}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 17 "bill_parser.l"
+#line 35 "bill_parser.l"
 {
-		for(i = 0;i < sizeof(items)/sizeof(items[0]); i++){
-			if(strcmp(items[i],cur_item) == 0){
-				f = 1;
-				sum += (price[i] * curr_qty);
-				break;
-			}
-		}
-		if(f == 1){
-			printf("Item added\n");
-		}else{
-			printf("Item not available\n");
-		}
-		f=0;
-		strcpy(cur_item,"");
-	}
+							for(i = 0;i < sizeof(items)/sizeof(items[0]); i++){
+								if(strcmp(items[i],cur_item) == 0){
+									f = 1;
+									sum += (price[i] * curr_qty);
+									bill_items[ind] = cur_item;
+									bill_qty[ind] = curr_qty;
+									bill_price[ind] = (price[i] * curr_qty);
+									ind++;
+									break;
+								}
+							}
+							if(f == 1){
+								printf("Item added\n");
+							}else{
+								printf("Item not available\n");
+							}
+							f=0;
+							strcpy(cur_item,"");
+						}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 33 "bill_parser.l"
+#line 55 "bill_parser.l"
 ECHO;
 	YY_BREAK
-#line 664 "lex.yy.c"
+#line 686 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1546,7 +1568,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 33 "bill_parser.l"
+#line 55 "bill_parser.l"
 
 
 int yywrap(void){}
